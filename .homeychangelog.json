@@ -229,5 +229,8 @@
   },
   "2.17.0": {
     "en": "Added device group support"
+  },
+  "2.17.1": {
+    "en": "additional crash protection"
   }
 }
