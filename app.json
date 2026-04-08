@@ -2,7 +2,7 @@
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.govee.developer",
   "brandColor": "#00ACE7",
-  "version": "2.17.1",
+  "version": "2.17.2",
   "compatibility": ">=12.2.0",
   "sdk": 3,
   "platforms": [
@@ -1352,6 +1352,45 @@
         ]
       },
       {
+        "id": "set-work-mode.kettle",
+        "title": {
+          "en": "Select work mode"
+        },
+        "hint": {
+          "en": "Sets the work mode of the kettle"
+        },
+        "titleFormatted": {
+          "en": "Set the work mode to [[workMode]] with option [[modeValue]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=govee-kettle&capabilities=workMode.kettle"
+          },
+          {
+            "type": "autocomplete",
+            "name": "workMode",
+            "title": {
+              "en": "Work mode"
+            },
+            "placeholder": {
+              "en": "Work mode"
+            }
+          },
+          {
+            "type": "autocomplete",
+            "name": "modeValue",
+            "title": {
+              "en": "Option"
+            },
+            "placeholder": {
+              "en": "Work mode"
+            }
+          }
+        ]
+      },
+      {
         "id": "activate-dreamview.localdevice",
         "title": {
           "en": "Toggle the dream view mode"
@@ -2100,6 +2139,40 @@
             "type": "device",
             "name": "device",
             "filter": "driver_id=govee-icemaker&capabilities=lackWater.ice_maker"
+          }
+        ]
+      },
+      {
+        "deprecated": true,
+        "id": "alarm_online.kettle_false",
+        "title": {
+          "en": "The kettle is online"
+        },
+        "hint": {
+          "en": "When the kettle is reported online"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=govee-kettle&capabilities=alarm_online.kettle"
+          }
+        ]
+      },
+      {
+        "deprecated": true,
+        "id": "alarm_online.kettle_true",
+        "title": {
+          "en": "The kettle is offline"
+        },
+        "hint": {
+          "en": "When the kettle is reported to be offline"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=govee-kettle&capabilities=alarm_online.kettle"
           }
         ]
       },
@@ -3326,6 +3399,78 @@
         "small": "/drivers/govee-icemaker/assets/images/small.png",
         "large": "/drivers/govee-icemaker/assets/images/large.png",
         "xlarge": "/drivers/govee-icemaker/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "api_settings"
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "options": {
+            "singular": false
+          },
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Device info"
+          },
+          "children": [
+            {
+              "id": "devicemodel",
+              "type": "label",
+              "label": {
+                "en": "Model"
+              },
+              "value": "Hxxxxxx"
+            },
+            {
+              "id": "devicecapabilities",
+              "type": "label",
+              "label": {
+                "en": "Capabilities"
+              },
+              "value": "{}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "govee-kettle",
+      "name": {
+        "en": "Kettle"
+      },
+      "class": "kettle",
+      "platforms": [
+        "local",
+        "cloud"
+      ],
+      "connectivity": [
+        "cloud"
+      ],
+      "capabilities": [
+        "alarm_connectivity",
+        "alarm_online.kettle",
+        "onoff",
+        "measure_temperature",
+        "target_temperature",
+        "workMode.kettle"
+      ],
+      "images": {
+        "small": "/drivers/govee-kettle/assets/images/small.png",
+        "large": "/drivers/govee-kettle/assets/images/large.png",
+        "xlarge": "/drivers/govee-kettle/assets/images/xlarge.png"
       },
       "pair": [
         {
