@@ -216,12 +216,15 @@ class GoveeDevice extends Device {
       {
         this.log('Processing the target temperature state');
         var temp = currentState.capabilitieslist.find(function(e) {return e.instance == "targetTemperature" })
-        var celc;
-        if(temp.state.value.unit=='Fahrenheit')
-          celc = (temp.state.value.targetTemperature - 32) / 1.8;
-        else
-          celc = temp.state.value.targetTemperature
-        this.setCapabilityValue('target_temperature',celc).catch( reason => this.log('Error while updating capability: '+reason) );
+          || currentState.capabilitieslist.find(function(e) {return e.instance == "sliderTemperature" });
+        if(temp && temp.state && temp.state.value) {
+          var celc;
+          if(temp.state.value.unit=='Fahrenheit')
+            celc = (temp.state.value.temperature - 32) / 1.8;
+          else
+            celc = temp.state.value.temperature
+          this.setCapabilityValue('target_temperature',celc).catch( reason => this.log('Error while updating capability: '+reason) );
+        }
       }
       if(this.hasCapability('measure_temperature'))
       {
@@ -328,15 +331,17 @@ class GoveeDevice extends Device {
         await this.addCapability('oscillating');
     } else if(this.hasCapability('oscillating'))
       await this.removeCapability('oscillating');
-    //Thermostat support
-    if(this.data.capabilitieslist.find(function(e) {return e.instance == "targetTemperature"}))
+    //Thermostat support (targetTemperature or sliderTemperature)
+    let tempInstance = this.data.capabilitieslist.find(function(e) {return e.instance == "targetTemperature"})
+      || this.data.capabilitieslist.find(function(e) {return e.instance == "sliderTemperature"});
+    if(tempInstance)
     {
-      this.log('Located the targetTemperature capabilities')
+      this.log('Located the '+tempInstance.instance+' capabilities')
+      this.temperatureInstance = tempInstance.instance;
       if(!this.hasCapability('target_temperature')) {
         await this.addCapability('target_temperature');
       }
-      let tempFields = this.data.capabilitieslist.find(function(e) {return e.instance == "targetTemperature"});
-      let tempRange = tempFields.parameters.fields.find(function(e) {return e.fieldName == "temperature" }).range;
+      let tempRange = tempInstance.parameters.fields.find(function(e) {return e.fieldName == "temperature" }).range;
       const thermostatOptions = {
         "min": tempRange.min,
         "max": tempRange.max,
@@ -475,7 +480,8 @@ class GoveeDevice extends Device {
    * @param {*} opts 
    */
   async onCapabilityTargetTemperature( value, opts ) {
-    await this.driver.setTargetTemperature(value, this.data.model, this.data.mac, this.goveedevicetype);
+    const instance = this.temperatureInstance || 'targetTemperature';
+    await this.driver.setTargetTemperature(value, instance, this.data.model, this.data.mac, this.goveedevicetype);
     this.setIfHasCapability('target_temperature', value);
   }
 

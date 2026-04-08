@@ -149,8 +149,13 @@ class GoveeLocalDevice extends Device {
 
       var discoveredDevice = this.homey.app.localApiClient.getDeviceById(this.data.id);
       if (discoveredDevice != null) {
-        this.setWarning(null);
-        this.setAvailable();
+        try {
+          this.setWarning(null);
+          this.setAvailable();
+        } catch (err) {
+          this.error('Failed to set device available (driver may not be registered on this platform):', err.message);
+          return;
+        }
         // Set connectivity to connected (alarm_connectivity = false means connected)
         if (this.hasCapability('alarm_connectivity')) {
           this.setCapabilityValue('alarm_connectivity', false).catch(this.error);

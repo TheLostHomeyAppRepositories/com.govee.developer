@@ -1,0 +1,34 @@
+{
+  "id": "govee-kettle",
+  "name": {
+    "en": "Kettle"
+  },
+  "class": "kettle",
+  "platforms": ["local","cloud"],
+  "connectivity": [ "cloud" ],
+  "capabilities": ["alarm_connectivity","alarm_online.kettle", "onoff", "measure_temperature", "target_temperature", "workMode.kettle"],
+  "images": {
+    "small": "/drivers/govee-kettle/assets/images/small.png",
+    "large": "/drivers/govee-kettle/assets/images/large.png",
+    "xlarge": "/drivers/govee-kettle/assets/images/xlarge.png"
+  },
+  "pair": [
+    {
+      "id": "api_settings"
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "options": {
+        "singular": false
+      },
+      "navigation": {
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}

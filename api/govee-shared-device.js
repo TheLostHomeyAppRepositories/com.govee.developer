@@ -86,37 +86,40 @@ class GoveeSharedDeviceClient {
             //Check if we use the dynamic version or the static ones
             device.lightScenes = null;
             let modeValues = capabilitieslist.find(function(e) {return e.instance == "lightScene" }).parameters;
-            if(modeValues.options.length==0)
+            if(modeValues && modeValues.options && modeValues.options.length>0)
             {
-              device.lightScenes=await device.driver.deviceLightModes(model, mac, device.goveedevicetype).then(device => {
-              return device.capabilitieslist.find(function(e) {return e.instance == "lightScene" }).parameters;
-            });
+              device.lightScenes=modeValues;
             } else {
-            device.lightScenes=modeValues;
+              try {
+                device.lightScenes=await device.driver.deviceLightModes(model, mac, device.goveedevicetype).then(device => {
+                  const cap = device.capabilitieslist.find(function(e) {return e.instance == "lightScene" });
+                  return cap && cap.parameters ? cap.parameters : null;
+                });
+              } catch(e) {
+                device.log('Failed to fetch dynamic light scenes: '+e.message);
+                device.lightScenes = null;
+              }
             }
-            const modeOptions = {
-            "type": "number",
-            "title": {
-                "en": "Light Scenes"
-            },
-            "getable": true,
-            "setable": true,
-            "uiComponent": enhancedUI,
-            "decimals": 0,
-            "min": 0,
-            "max": (device.lightScenes.options.length-1),
-            "step": 1
-            }
-            //console.log(JSON.stringify(device.lightScenes))
-            //console.log('Light scenes: '+JSON.stringify(modeOptions));
-            if(device.lightScenes.options.length>0){
-              //What if there are no lightscenes? then the control is going to give errors
+            if(device.lightScenes && device.lightScenes.options && device.lightScenes.options.length>0){
+              const modeOptions = {
+              "type": "number",
+              "title": {
+                  "en": "Light Scenes"
+              },
+              "getable": true,
+              "setable": true,
+              "uiComponent": enhancedUI,
+              "decimals": 0,
+              "min": 0,
+              "max": (device.lightScenes.options.length-1),
+              "step": 1
+              }
               await device.setCapabilityOptions('lightScenes.'+device.goveedevicetype, modeOptions);
               //Register the flow actions
               device.log('Setup the flow for Light scene capability');
-              await this.setupFlowSwitchLightScene(device); 
+              await this.setupFlowSwitchLightScene(device);
             } else {
-              await device.removeCapability('lightScenes.'+device.goveedevicetype); 
+              await device.removeCapability('lightScenes.'+device.goveedevicetype);
             }
           }
         } else if(device.hasCapability('lightScenes.'+device.goveedevicetype))
@@ -128,41 +131,44 @@ class GoveeSharedDeviceClient {
             await device.addCapability('lightDiyScenes.'+device.goveedevicetype);
           }
           if(device.hasCapability('lightDiyScenes.'+device.goveedevicetype)) {
-            device.log('Adding dynamic options to the light scenes capability');
+            device.log('Adding dynamic options to the DIY scenes capability');
             //Check if we use the dynamic version or the static ones
             device.diyScenes = null;
             let modeValues = capabilitieslist.find(function(e) {return e.instance == "diyScene" }).parameters;
-            if(modeValues.options.length==0)
+            if(modeValues && modeValues.options && modeValues.options.length>0)
             {
-              device.diyScenes=await device.driver.deviceDiyLightModes(model, mac, device.goveedevicetype).then(device => {
-              return device.capabilitieslist.find(function(e) {return e.instance == "diyScene" }).parameters;
-            });
-            } else {
               device.diyScenes=modeValues;
+            } else {
+              try {
+                device.diyScenes=await device.driver.deviceDiyLightModes(model, mac, device.goveedevicetype).then(device => {
+                  const cap = device.capabilitieslist.find(function(e) {return e.instance == "diyScene" });
+                  return cap && cap.parameters ? cap.parameters : null;
+                });
+              } catch(e) {
+                device.log('Failed to fetch dynamic DIY scenes: '+e.message);
+                device.diyScenes = null;
+              }
             }
-            const modeOptions = {
-            "type": "number",
-            "title": {
-                "en": "DIY Scenes"
-            },
-            "getable": true,
-            "setable": true,
-            "uiComponent": enhancedUI,
-            "decimals": 0,
-            "min": 0,
-            "max": (device.diyScenes.options.length-1),
-            "step": 1
-            }
-            //console.log(JSON.stringify(device.diyScenes))
-            //Now setup the slider
-            //console.log('DIY Light scenes: '+JSON.stringify(modeOptions));
-            if(device.diyScenes.options.length>0){
+            if(device.diyScenes && device.diyScenes.options && device.diyScenes.options.length>0){
+              const modeOptions = {
+              "type": "number",
+              "title": {
+                  "en": "DIY Scenes"
+              },
+              "getable": true,
+              "setable": true,
+              "uiComponent": enhancedUI,
+              "decimals": 0,
+              "min": 0,
+              "max": (device.diyScenes.options.length-1),
+              "step": 1
+              }
               await device.setCapabilityOptions('lightDiyScenes.'+device.goveedevicetype, modeOptions);
               //Register the flow actions
               device.log('Setup the flow for DIY scene capability');
               await this.setupFlowSwitchDiyScene(device);
             } else {
-              await device.removeCapability('lightDiyScenes.'+device.goveedevicetype); 
+              await device.removeCapability('lightDiyScenes.'+device.goveedevicetype);
             }
           }
         } else if(device.hasCapability('lightDiyScenes.'+device.goveedevicetype))
@@ -178,37 +184,40 @@ class GoveeSharedDeviceClient {
               //Check if we use the dynamic version or the static ones
               device.nightlightScenes = null;
               let modeValues = capabilitieslist.find(function(e) {return e.instance == "nightlightScene" }).parameters;
-              if(modeValues.options.length==0)
+              if(modeValues && modeValues.options && modeValues.options.length>0)
               {
-                device.nightlightScenes=await device.driver.deviceLightModes(model, mac, device.goveedevicetype).then(device => {
-                return device.capabilitieslist.find(function(e) {return e.instance == "nightlightScene" }).parameters;
-              });
-              } else {
                 device.nightlightScenes=modeValues;
+              } else {
+                try {
+                  device.nightlightScenes=await device.driver.deviceLightModes(model, mac, device.goveedevicetype).then(device => {
+                    const cap = device.capabilitieslist.find(function(e) {return e.instance == "nightlightScene" });
+                    return cap && cap.parameters ? cap.parameters : null;
+                  });
+                } catch(e) {
+                  device.log('Failed to fetch dynamic nightlight scenes: '+e.message);
+                  device.nightlightScenes = null;
+                }
               }
-              const modeOptions = {
-              "type": "number",
-              "title": {
-                  "en": "Light Scenes"
-              },
-              "getable": true,
-              "setable": true,
-              "uiComponent": enhancedUI,
-              "decimals": 0,
-              "min": 0,
-              "max": (device.nightlightScenes.options.length-1),
-              "step": 1
-              }
-              //console.log(JSON.stringify(device.nightlightScenes))
-              //console.log('Light scenes: '+JSON.stringify(modeOptions));
-              if(device.nightlightScenes.options.length>0){
-                //What if there are no lightscenes? then the control is going to give errors
+              if(device.nightlightScenes && device.nightlightScenes.options && device.nightlightScenes.options.length>0){
+                const modeOptions = {
+                "type": "number",
+                "title": {
+                    "en": "Light Scenes"
+                },
+                "getable": true,
+                "setable": true,
+                "uiComponent": enhancedUI,
+                "decimals": 0,
+                "min": 0,
+                "max": (device.nightlightScenes.options.length-1),
+                "step": 1
+                }
                 await device.setCapabilityOptions('nightlightScenes.'+device.goveedevicetype, modeOptions);
                 //Register the flow actions
-                device.log('Setup the flow for Light scene capability');
-                await this.setupFlowSwitchNightlightScene(device); 
+                device.log('Setup the flow for nightlight scene capability');
+                await this.setupFlowSwitchNightlightScene(device);
               } else {
-                await device.removeCapability('nightlightScenes.'+device.goveedevicetype); 
+                await device.removeCapability('nightlightScenes.'+device.goveedevicetype);
               }
             }
           } else if(device.hasCapability('nightlightScenes.'+device.goveedevicetype))
@@ -318,9 +327,11 @@ class GoveeSharedDeviceClient {
         //Update the capability
         device.setIfHasCapability('alarm_presence', (tokens.presence==1));
         //And trigger the flowcard
-        device._bodyAppearedTrigger.trigger(device, tokens, {})
-          .then(() => device.log('bodyAppearedEvent flow triggered'))
-          .catch(err => device.error('bodyAppearedEvent flow trigger failed:', err.message));
+        if(device._bodyAppearedTrigger) {
+          device._bodyAppearedTrigger.trigger(device, tokens, {})
+            .then(() => device.log('bodyAppearedEvent flow triggered'))
+            .catch(err => device.error('bodyAppearedEvent flow trigger failed:', err.message));
+        }
       }
       if(message.capabilities.find(function(e) {return e.instance == "lackWaterEvent" }))
         {
@@ -333,9 +344,11 @@ class GoveeSharedDeviceClient {
           device.setIfHasCapability('alarm_tank_empty', (tokens.lack==1));
           device.setIfHasCapability('lackWater.'+device.goveedevicetype, (tokens.lack==1));
           //And trigger the flowcard
-          device._lackWaterTrigger.trigger(device, tokens, {})
-            .then(() => device.log('lackWaterEvent flow triggered'))
-            .catch(err => device.error('lackWaterEvent flow trigger failed:', err.message));
+          if(device._lackWaterTrigger) {
+            device._lackWaterTrigger.trigger(device, tokens, {})
+              .then(() => device.log('lackWaterEvent flow triggered'))
+              .catch(err => device.error('lackWaterEvent flow trigger failed:', err.message));
+          }
         }
     }
 

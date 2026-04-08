@@ -1,0 +1,63 @@
+{
+    "triggers": [
+      {
+        "deprecated": true,
+        "id": "alarm_online.kettle_false",
+        "title": {
+          "en": "The kettle is online"
+        },
+        "hint": {
+          "en": "When the kettle is reported online"
+        },
+        "$filter": "capabilities=alarm_online.kettle"
+      },
+      {
+        "deprecated": true,
+        "id": "alarm_online.kettle_true",
+        "title": {
+          "en": "The kettle is offline"
+        },
+        "hint": {
+          "en": "When the kettle is reported to be offline"
+        },
+        "$filter": "capabilities=alarm_online.kettle"
+      }
+    ],
+    "actions": [
+      {
+            "id": "set-work-mode.kettle",
+            "title": {
+              "en": "Select work mode"
+            },
+            "hint": {
+              "en": "Sets the work mode of the kettle"
+            },
+            "titleFormatted": {
+              "en": "Set the work mode to [[workMode]] with option [[modeValue]]"
+            },
+            "$filter": "capabilities=workMode.kettle",
+            "args": [
+              {
+                "type": "autocomplete",
+                "name": "workMode",
+                "title": {
+                  "en": "Work mode"
+                },
+                "placeholder": {
+                  "en": "Work mode"
+                }
+              },
+              {
+                "type": "autocomplete",
+                "name": "modeValue",
+                "title": {
+                  "en": "Option"
+                },
+                "placeholder": {
+                  "en": "Work mode"
+                }
+              }
+            ]
+          }
+       ]
+}
